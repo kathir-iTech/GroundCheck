@@ -27,6 +27,9 @@ async function getPdfDocument(pdfUrl: string): Promise<PDFDocumentProxy> {
     })
     .promise;
   pdfDocCache.set(pdfUrl, promise);
+  promise.catch(() => {
+    pdfDocCache.delete(pdfUrl);
+  });
   return promise;
 }
 
@@ -39,10 +42,10 @@ type PageWrapperState = {
 type ConnectorFrom = ScreenPoint | null;
 
 const STATUS_GLOW_RGB: Record<VerificationResult["status"], string> = {
-  confirmed: "52, 211, 153",
-  contradicted: "251, 113, 133",
-  unsupported: "148, 163, 184",
-  unverifiable: "251, 191, 36",
+  confirmed: "111, 160, 107",
+  contradicted: "217, 107, 82",
+  unsupported: "199, 155, 60",
+  unverifiable: "162, 150, 138",
 };
 
 function boxToPixels(
@@ -78,7 +81,6 @@ export function PdfSourceView({
 
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const pageWrapRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -115,7 +117,17 @@ export function PdfSourceView({
       canvas.height = viewport.height;
       const ctx = canvas.getContext("2d");
       if (!ctx) continue;
-      page.render({ canvas, viewport }).promise.catch(() => {});
+      page
+        .render({ canvas, viewport })
+        .promise.catch((err) => {
+          if (err instanceof Error !== false) {
+            setError(
+              `Failed to render page ${page.pageNumber}: ${
+                err instanceof Error ? err.message : String(err)
+              }`
+            );
+          }
+        });
     }
   }, [pages]);
 
@@ -226,6 +238,7 @@ export function PdfSourceView({
               />
               {showGlow && focusedBoxPx && (
                 <div
+                  aria-hidden="true"
                   className="pointer-events-none absolute z-10 rounded-sm mix-blend-multiply transition-opacity duration-500"
                   style={{
                     left: focusedBoxPx.left,
@@ -250,7 +263,7 @@ export function PdfSourceView({
       </div>
 
       <svg
-        ref={svgRef}
+        aria-hidden="true"
         className="pointer-events-none fixed inset-0 z-30 h-full w-full"
         width="100%"
         height="100%"

@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 224 76% 48%;
-    --radius: 0.5rem;
+    --background: 33 47% 95%;
+    --foreground: 15 30% 21%;
+    --card: 36 100% 99%;
+    --card-foreground: 15 25% 24%;
+    --popover: 36 100% 99%;
+    --popover-foreground: 15 25% 24%;
+    --primary: 10 54% 50%;
+    --primary-foreground: 20 100% 99%;
+    --secondary: 29 50% 91%;
+    --secondary-foreground: 16 22% 32%;
+    --muted: 30 38% 90%;
+    --muted-foreground: 19 21% 41%;
+    --accent: 16 74% 84%;
+    --accent-foreground: 14 33% 28%;
+    --destructive: 9 59% 44%;
+    --destructive-foreground: 20 100% 98%;
+    --border: 27 38% 85%;
+    --input: 27 38% 82%;
+    --ring: 10 54% 50%;
+    --radius: 0.7rem;
   }
 }
 
@@ -32,7 +32,11 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
 }
 
@@ -40,19 +44,22 @@
   width: 8px;
 }
 .scrollbar-slim::-webkit-scrollbar-thumb {
-  background: hsl(217 33% 20%);
+  background: #d8c8b6;
   border-radius: 4px;
+}
+.scrollbar-slim::-webkit-scrollbar-thumb:hover {
+  background: #c8b5a0;
 }
 
 @keyframes glowPulse {
   0%,
   100% {
-    box-shadow: 0 0 6px 2px rgba(var(--glow-rgb), 0.55),
-      0 0 16px 4px rgba(var(--glow-rgb), 0.35);
+    box-shadow: 0 0 6px 2px rgba(var(--glow-rgb), 0.5),
+      0 0 16px 4px rgba(var(--glow-rgb), 0.3);
   }
   50% {
-    box-shadow: 0 0 10px 4px rgba(var(--glow-rgb), 0.8),
-      0 0 28px 8px rgba(var(--glow-rgb), 0.5);
+    box-shadow: 0 0 10px 4px rgba(var(--glow-rgb), 0.75),
+      0 0 26px 8px rgba(var(--glow-rgb), 0.45);
   }
 }
 

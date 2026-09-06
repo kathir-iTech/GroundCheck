@@ -22,11 +22,6 @@ export const ChapterSchema = z.object({
   pages: z.array(PageSchema),
 });
 
-export const ClaimSchema = z.object({
-  id: z.string(),
-  text: z.string(),
-});
-
 export const BoundingBoxSchema = z.object({
   x: z.number(),
   y: z.number(),
@@ -58,7 +53,6 @@ export const VerificationResponseSchema = z.object({
 export type PageItem = z.infer<typeof PageItemSchema>;
 export type Page = z.infer<typeof PageSchema>;
 export type Chapter = z.infer<typeof ChapterSchema>;
-export type Claim = z.infer<typeof ClaimSchema>;
 export type BoundingBox = z.infer<typeof BoundingBoxSchema>;
 export type VerificationResult = z.infer<typeof VerificationResultSchema>;
 export type VerificationResponse = z.infer<typeof VerificationResponseSchema>;
@@ -68,11 +62,4 @@ export const STATUS_LABELS: Record<VerificationResult["status"], string> = {
   contradicted: "Contradicted",
   unsupported: "Unsupported",
   unverifiable: "Unverifiable",
-};
-
-export const STATUS_COLORS: Record<VerificationResult["status"], string> = {
-  confirmed: "emerald",
-  contradicted: "rose",
-  unsupported: "slate",
-  unverifiable: "amber",
 };

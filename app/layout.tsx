@@ -1,10 +1,23 @@
 import type { Metadata } from "next";
+import { Baloo_2, Inter } from "next/font/google";
 import "./globals.css";
 
+const baloo = Baloo_2({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Groundcheck — verify AI study answers against the real textbook",
+  title: "Groundcheck — checks study answers against the textbook",
   description:
-    "Paste an AI-generated study answer and Groundcheck verifies it claim by claim against your real textbook PDF — confirmed, contradicted, or unsupported, with a glowing highlight box on the exact page.",
+    "Paste a study answer and Groundcheck verifies its claims one by one against the real textbook — confirmed, contradicted, or unsupported — with the exact page highlighted.",
 };
 
 export default function RootLayout({
@@ -13,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${baloo.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );

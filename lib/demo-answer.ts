@@ -1,0 +1,2 @@
+export const DEMO_ANSWER =
+  "The first law of thermodynamics says the change in internal energy of a system equals the heat added minus the work done. In any real thermodynamic process the entropy of an isolated system never decreases. A perfect heat engine that converts all absorbed heat into work, rejecting nothing, is physically allowed by the second law. Thermal conductivity is measured in watts per mole per metre and is highest for gases. Entropy varies inversely with temperature for every thermodynamic system.";

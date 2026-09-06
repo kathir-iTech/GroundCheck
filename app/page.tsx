@@ -6,12 +6,11 @@ import { ClaimCard } from "@/components/ClaimCard";
 import { PdfSourceView } from "@/components/PdfSourceView";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { DEMO_ANSWER } from "@/lib/demo-answer";
 import type { VerificationResponse } from "@/lib/schema";
 
 import demoResponse from "@/data/demo-response.json";
 import chapterMeta from "@/data/chapter.json";
-
-const DEMO_ANSWER = "The first law of thermodynamics says the change in internal energy of a system equals the heat added minus the work done. In any real thermodynamic process the entropy of an isolated system never decreases. A perfect heat engine that converts all absorbed heat into work, rejecting nothing, is physically allowed by the second law. Thermal conductivity is measured in watts per mole per metre and is highest for gases. Entropy varies inversely with temperature for every thermodynamic system.";
 
 const onlineDemoResponse = demoResponse as unknown as VerificationResponse;
 
@@ -19,7 +18,7 @@ const chapterTitle =
   (chapterMeta as { title?: string }).title ??
   "Physics · Chapter 4 — Thermodynamics and Energy";
 
-const REQUEST_TIMEOUT_MS = 90_000;
+const REQUEST_TIMEOUT_MS = 40_000;
 const SLOW_NOTE_MS = 8_000;
 
 export default function Home() {
@@ -58,9 +57,13 @@ export default function Home() {
         });
         const data = await res.json().catch(() => null);
         if (!res.ok) {
+          const raw =
+            data && typeof data.error === "string" ? data.error : "The verification request failed.";
           throw new Error(
-            (data && typeof data.error === "string" ? data.error : "The verification request failed.") +
-              (res.status === 502 ? " Check that GEMINI_API_KEY is set." : "")
+            raw +
+              (res.status === 500 || (res.status === 502 && !/quota/i.test(raw))
+                ? " Check that the server has GEMINI_API_KEY set."
+                : "")
           );
         }
         setResponse(data as VerificationResponse);
@@ -122,30 +125,33 @@ export default function Home() {
   }, [response, focusedId]);
 
   const summaryLine = response?.summary;
+  const zeroResults = Boolean(response && response.results.length === 0);
 
   return (
     <div className="flex h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-border px-6 py-3">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold tracking-tight">Groundcheck</span>
-          <span className="hidden text-sm text-muted-foreground md:inline">
-            — is that AI answer actually true, on the page?
+      <header className="flex items-center justify-between border-b border-border bg-card/60 px-5 py-3">
+        <div className="flex items-baseline gap-3">
+          <span className="font-display text-xl font-semibold text-foreground">
+            Groundcheck
           </span>
+          <p className="hidden text-sm text-muted-foreground md:inline">
+            Checks study answers against the textbook.
+          </p>
         </div>
         <div
           className={cn(
             "rounded-full border px-3 py-1 text-xs font-medium",
             liveMode
-              ? "border-primary/50 bg-primary/10 text-primary"
-              : "border-border bg-secondary text-muted-foreground"
+              ? "border-primary/40 bg-accent text-accent-foreground"
+              : "border-border bg-muted text-muted-foreground"
           )}
         >
           {liveMode ? "Live API" : "Cached demo"}
         </div>
       </header>
 
-      <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[minmax(300px,340px)_minmax(360px,1fr)_480px]">
-        <section className="min-h-0 overflow-y-auto border-b border-border px-5 py-5 scrollbar-slim lg:border-b-0 lg:border-r">
+      <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[minmax(280px,320px)_minmax(340px,1fr)_480px]">
+        <section className="min-h-0 overflow-y-auto border-b border-border px-4 py-5 scrollbar-slim lg:border-b-0 lg:border-r">
           <InputPanel
             demoMode={liveMode}
             onToggleDemo={toggleLive}
@@ -161,19 +167,20 @@ export default function Home() {
         </section>
 
         <section className="flex min-h-0 flex-col border-b border-border lg:border-b-0 lg:border-r">
-          <div className="border-b border-border px-5 py-3">
+          <div className="px-5 py-3">
             {loading ? (
               slowNote ? (
-                <p className="text-sm animate-pulse text-muted-foreground">
-                  Still working — chapter checks can take ~30 s on a long
-                  paste…
+                <p className="animate-pulse text-sm text-muted-foreground">
+                  Still working — a long paste can take up to ~40 s.
                 </p>
               ) : (
                 <Skeleton className="h-5 w-2/3" />
               )
             ) : summaryLine ? (
-              <p className="text-sm font-medium text-foreground/90">
-                {summaryLine}
+              <p className="text-sm font-medium text-foreground/80">
+                {zeroResults
+                  ? "No checkable claims in that text."
+                  : summaryLine}
               </p>
             ) : (
               <p className="text-sm text-muted-foreground">
@@ -181,7 +188,7 @@ export default function Home() {
               </p>
             )}
           </div>
-          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4 scrollbar-slim">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 scrollbar-slim">
             {loading ? (
               <>
                 <Skeleton className="h-24 w-full" />
@@ -190,11 +197,11 @@ export default function Home() {
               </>
             ) : response ? (
               response.results.length === 0 ? (
-                <div className="rounded-lg border border-border bg-secondary/30 px-4 py-6 text-center">
-                  <p className="text-sm font-medium text-foreground/90">
+                <div className="rounded-2xl border border-border bg-card px-4 py-8 text-center">
+                  <p className="font-display text-sm font-semibold text-foreground">
                     Couldn&rsquo;t find any checkable claims in that text
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
                     Try pasting a fuller explanation — a single casual remark
                     usually has nothing to verify against the chapter.
                   </p>
@@ -211,15 +218,20 @@ export default function Home() {
                 ))
               )
             ) : (
-              <p className="px-2 text-sm text-muted-foreground">
-                Paste an answer and press verify to get a claim-by-claim
-                verdict.
-              </p>
+              <div className="rounded-2xl border border-dashed border-border bg-muted/40 px-4 py-10 text-center">
+                <p className="font-display text-sm font-semibold text-foreground/70">
+                  No verdicts yet
+                </p>
+                <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                  Paste an answer, then hit Verify against the chapter to get a
+                  claim-by-claim verdict.
+                </p>
+              </div>
             )}
           </div>
         </section>
 
-        <section className="min-h-0 bg-[#1b1f2a] lg:border-r-0">
+        <section className="min-h-0 bg-[#ede1d2] lg:border-r-0">
           <PdfSourceView
             pdfUrl={response?.pdfUrl ?? "/chapters/chapter.pdf"}
             focusedResult={focusedResult}

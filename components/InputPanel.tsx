@@ -37,8 +37,8 @@ export function InputPanel({
   return (
     <div className="flex h-full flex-col gap-4">
       <div>
-        <Label htmlFor="answer" className="text-sm">
-          AI-generated answer
+        <Label htmlFor="answer" className="text-xs font-medium text-muted-foreground">
+          The answer to check
         </Label>
         <Textarea
           id="answer"
@@ -46,56 +46,56 @@ export function InputPanel({
           onChange={(e) => onChangeAnswer(e.target.value)}
           placeholder={
             demoMode
-              ? "Toggle 'Try the live example' on, or paste your own AI answer."
-              : "Paste an AI-generated study answer here…"
+              ? "A demo answer is loaded. Paste your own to overwrite it."
+              : "Paste the AI study answer here…"
           }
-          className="mt-2 min-h-[220px] font-mono text-[13px]"
+          className="mt-2 min-h-[220px] rounded-2xl bg-card font-mono text-[13px]"
         />
         <div className="mt-1 flex items-center justify-end gap-2 text-xs">
           <span
             className={cn(
               "text-muted-foreground",
-              overSoftMax && "font-medium text-amber-300"
+              overSoftMax && "font-medium text-[#9A6B10]"
             )}
           >
             {answer.length.toLocaleString()} / {SOFT_MAX_CHARS}
           </span>
           {overSoftMax && (
-            <span className="text-amber-300">
+            <span className="text-[#9A6B10]">
               Long answer — adds latency and cost. Consider trimming it.
             </span>
           )}
         </div>
       </div>
 
-      <div className="rounded-lg border border-border/70 bg-secondary/40 p-4">
+      <div className="rounded-2xl border border-border bg-secondary px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <p className="text-sm font-medium">Try the live example</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm font-medium">Live API mode</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {demoMode
-                ? "ON — makes a real Gemini API call from the server."
-                : "OFF — loads the cached, verified demo response instantly."}
+                ? "Sends a real Gemini request from the server."
+                : "Uses the saved demo response — instant and free."}
             </p>
           </div>
           <Switch
             checked={demoMode}
             onCheckedChange={onToggleDemo}
-            aria-label="Try the live example"
+            aria-label="Live API mode"
           />
         </div>
       </div>
 
-      <div className="rounded-lg border border-border/70 bg-secondary/40 px-4 py-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          Chapter
+      <div className="rounded-2xl border border-border bg-secondary px-4 py-3">
+        <p className="text-xs font-medium text-muted-foreground">Chapter</p>
+        <p className="font-display mt-1 text-sm font-semibold">
+          {chapterTitle}
         </p>
-        <p className="mt-1 text-sm font-semibold">{chapterTitle}</p>
       </div>
 
-      <div className="mt-auto flex flex-col gap-2">
+      <div className="mt-auto flex flex-col gap-2 pb-1">
         {error && (
-          <p className="rounded-md border border-rose-500/40 bg-rose-500/10 px-3 py-2 text-xs text-rose-300">
+          <p className="rounded-xl border border-[#E5B3A5] bg-[#F5D9D0] px-3 py-2 text-xs text-[#7C301F]">
             {error}
           </p>
         )}
@@ -103,20 +103,24 @@ export function InputPanel({
           onClick={onVerify}
           disabled={empty || loading}
           title={empty ? "Paste an answer first" : undefined}
+          className="h-11 rounded-xl font-display text-sm font-semibold"
         >
           {loading ? (
             <>
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground/30 border-t-foreground" />
-              {slowNote
-                ? "Still working…"
-                : "Verifying against the chapter…"}
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground" />
+              {slowNote ? "Still working…" : "Verifying against the chapter…"}
             </>
           ) : (
             "Verify against the chapter"
           )}
         </Button>
         {!demoMode && (
-          <Button variant="ghost" size="sm" onClick={useExample}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={useExample}
+            className="rounded-xl"
+          >
             Load the example answer
           </Button>
         )}
