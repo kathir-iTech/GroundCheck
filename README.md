@@ -49,7 +49,7 @@ For live verification, copy `.env.local.example` to `.env.local` and set `GEMINI
 - Environment variables: `GEMINI_API_KEY`, optional `GEMINI_MODEL`.
 - No `data/` or `public/` build steps needed — `next build` bundles `data/chapter.json` and copies `public/` automatically.
 
-Cost note: the free tier exposes only Flash-tier models; `.env.local.example` defaults to `gemini-2.5-flash`.
+Cost note: the free tier exposes only Flash-tier models; `.env.local.example` defaults to `gemini-3.6-flash`.
 
 ## Project structure
 

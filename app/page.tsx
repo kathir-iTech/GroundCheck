@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { InputPanel } from "@/components/InputPanel";
 import { ClaimCard } from "@/components/ClaimCard";
 import { PdfSourceView } from "@/components/PdfSourceView";
@@ -15,7 +15,7 @@ const DEMO_ANSWER = "The first law of thermodynamics says the change in internal
 const onlineDemoResponse = demoResponse as unknown as VerificationResponse;
 
 export default function Home() {
-  const [answer, setAnswer] = useState(DEMO_ANSWER);
+  const [answer, setAnswer] = useState("");
   const [liveMode, setLiveMode] = useState(false);
   const [response, setResponse] = useState<VerificationResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,10 +26,6 @@ export default function Home() {
     x: number;
     y: number;
   } | null>(null);
-
-  useEffect(() => {
-    setResponse(onlineDemoResponse);
-  }, []);
 
   const runVerify = useCallback(async () => {
     setLoading(true);
