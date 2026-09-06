@@ -11,6 +11,25 @@ type LoadedPage = {
 
 type ScreenPoint = { x: number; y: number };
 
+const pdfDocCache = new Map<string, Promise<PDFDocumentProxy>>();
+
+async function getPdfDocument(pdfUrl: string): Promise<PDFDocumentProxy> {
+  const cached = pdfDocCache.get(pdfUrl);
+  if (cached) return cached;
+
+  const pdfjs = await import("pdfjs-dist");
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
+
+  const promise = pdfjs
+    .getDocument({
+      url: pdfUrl,
+      standardFontDataUrl: "/pdfjs/standard_fonts/",
+    })
+    .promise;
+  pdfDocCache.set(pdfUrl, promise);
+  return promise;
+}
+
 type PageWrapperState = {
   boxPx: { left: number; top: number; width: number; height: number } | null;
   boxCenterScreen: ScreenPoint | null;
@@ -69,12 +88,7 @@ export function PdfSourceView({
 
     (async () => {
       try {
-        const pdfjs = await import("pdfjs-dist");
-        pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.mjs";
-        const doc: PDFDocumentProxy = await pdfjs.getDocument({
-          url: pdfUrl,
-          standardFontDataUrl: "/pdfjs/standard_fonts/",
-        }).promise;
+        const doc = await getPdfDocument(pdfUrl);
         const loaded: LoadedPage[] = [];
         for (let n = 1; n <= doc.numPages; n++) {
           const page = await doc.getPage(n);
@@ -83,7 +97,8 @@ export function PdfSourceView({
         }
         if (!cancelled) setPages(loaded);
       } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : String(err));
       }
     })();
 

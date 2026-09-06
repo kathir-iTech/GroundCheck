@@ -6,6 +6,8 @@ import chapterData from "@/data/chapter.json";
 
 const chapter = ChapterSchema.parse(chapterData);
 
+export const maxDuration = 45;
+
 const requestSchema = z.object({
   answerText: z.string().min(10).max(MAX_ANSWER_CHARS),
 });

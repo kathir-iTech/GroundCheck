@@ -71,7 +71,8 @@ async function callGemini(prompt: string): Promise<string> {
   });
 
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  const MAX_ATTEMPTS = 3;
+  const MAX_ATTEMPTS = 2;
+  const BACKOFF_MS = 1000;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
@@ -88,11 +89,10 @@ async function callGemini(prompt: string): Promise<string> {
           : undefined;
       const transient = status === 429 || status === 503 || status === 500;
       if (!transient || attempt === MAX_ATTEMPTS) throw err;
-      const delay = 1500 * attempt;
       console.warn(
-        `Gemini transient error (status ${status}), retrying in ${delay}ms (attempt ${attempt + 1}/${MAX_ATTEMPTS}) …`
+        `Gemini transient error (status ${status}), retrying once in ${BACKOFF_MS}ms …`
       );
-      await sleep(delay);
+      await sleep(BACKOFF_MS);
     }
   }
 
