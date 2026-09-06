@@ -1,0 +1,12 @@
+next-env.d.ts
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next.config.mjs.bak
+
+# environment — never commit secrets
+.env
+.env*.local
+!.env*.local.example

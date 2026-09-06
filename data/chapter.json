@@ -1,0 +1,269 @@
+{
+  "pdfUrl": "/chapters/chapter.pdf",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "text": "Chapter 4 — Thermodynamics and Energy 4.1 Thermal Energy and Temperature Heat is the energy that flows between two systems because of a difference in temperature. Temperature is a measure of the average kinetic energy of the particles in a substance. Two systems are in thermal equilibrium when they reach the same temperature and no further net heat flows between them. 4.2 The First Law of Thermodynamics The first law of thermodynamics states that the change in the internal energy of a system equals the heat added to the system minus the work done by the system. The zeroth law of thermodynamics states that if two systems are each in thermal equilibrium with a third system, then they are in thermal equilibrium with each other. Specific heat is the amount of heat required to raise the temperature of one gram of a substance by one degree Celsius.",
+      "items": [
+        {
+          "str": "Chapter 4 — Thermodynamics and Energy",
+          "x": 72,
+          "y": 740,
+          "width": 282.40625,
+          "height": 14,
+          "ascent": 12.9951171875,
+          "descent": 3.3017578125
+        },
+        {
+          "str": "4.1 Thermal Energy and Temperature",
+          "x": 72,
+          "y": 719,
+          "width": 246.640625,
+          "height": 14,
+          "ascent": 12.9951171875,
+          "descent": 3.3017578125
+        },
+        {
+          "str": "Heat is the energy that flows between two systems because of a difference in temperature.",
+          "x": 72,
+          "y": 698,
+          "width": 441.45556640625,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "Temperature is a measure of the average kinetic energy of the particles in a substance.",
+          "x": 72,
+          "y": 681,
+          "width": 424.9501953125,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "Two systems are in thermal equilibrium when they reach the same temperature and no",
+          "x": 72,
+          "y": 664,
+          "width": 421.8671875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "further net heat flows between them.",
+          "x": 72,
+          "y": 647,
+          "width": 177.93359375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "4.2 The First Law of Thermodynamics",
+          "x": 72,
+          "y": 630,
+          "width": 250.5029296875,
+          "height": 14,
+          "ascent": 12.9951171875,
+          "descent": 3.3017578125
+        },
+        {
+          "str": "The first law of thermodynamics states that the change in the internal energy of a system",
+          "x": 72,
+          "y": 609,
+          "width": 431.65869140625,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "equals the heat added to the system minus the work done by the system.",
+          "x": 72,
+          "y": 592,
+          "width": 355.8671875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "The zeroth law of thermodynamics states that if two systems are each in thermal",
+          "x": 72,
+          "y": 575,
+          "width": 391.2734375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "equilibrium with a third system, then they are in thermal equilibrium with each other.",
+          "x": 72,
+          "y": 558,
+          "width": 405.96337890625,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "Specific heat is the amount of heat required to raise the temperature of one gram of a",
+          "x": 72,
+          "y": 541,
+          "width": 415.185546875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "substance by one degree Celsius.",
+          "x": 72,
+          "y": 524,
+          "width": 165.71435546875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        }
+      ]
+    },
+    {
+      "pageNumber": 2,
+      "text": "4.3 The Second Law and Entropy Entropy is a measure of the disorder or randomness of a system. In any real thermodynamic process, the entropy of an isolated system never decreases. A heat engine converts thermal energy into mechanical work but always rejects some heat to a cold reservoir. The efficiency of a Carnot engine depends only on the temperatures of the hot and cold reservoirs, and no heat engine can be more efficient than a Carnot engine operating between the same two temperatures. 4.4 Modes of Heat Transfer Conduction is the transfer of thermal energy through a material due to a temperature gradient, without bulk motion of the material. Convection involves the bulk movement of a fluid carrying energy from one place to another. Radiation is the transfer of energy by electromagnetic waves and does not require a medium.",
+      "items": [
+        {
+          "str": "4.3 The Second Law and Entropy",
+          "x": 72,
+          "y": 740,
+          "width": 219.3720703125,
+          "height": 14,
+          "ascent": 12.9951171875,
+          "descent": 3.3017578125
+        },
+        {
+          "str": "Entropy is a measure of the disorder or randomness of a system.",
+          "x": 72,
+          "y": 719,
+          "width": 316.0888671875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "In any real thermodynamic process, the entropy of an isolated system never decreases.",
+          "x": 72,
+          "y": 702,
+          "width": 426.15869140625,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "A heat engine converts thermal energy into mechanical work but always rejects some",
+          "x": 72,
+          "y": 685,
+          "width": 415.14794921875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "heat to a cold reservoir.",
+          "x": 72,
+          "y": 668,
+          "width": 114.94677734375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "The efficiency of a Carnot engine depends only on the temperatures of the hot and",
+          "x": 72,
+          "y": 651,
+          "width": 401.76318359375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "cold reservoirs, and no heat engine can be more efficient than a Carnot engine",
+          "x": 72,
+          "y": 634,
+          "width": 382.7978515625,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "operating between the same two temperatures.",
+          "x": 72,
+          "y": 617,
+          "width": 229.90966796875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "4.4 Modes of Heat Transfer",
+          "x": 72,
+          "y": 600,
+          "width": 178.9375,
+          "height": 14,
+          "ascent": 12.9951171875,
+          "descent": 3.3017578125
+        },
+        {
+          "str": "Conduction is the transfer of thermal energy through a material due to a temperature",
+          "x": 72,
+          "y": 579,
+          "width": 410.89404296875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "gradient, without bulk motion of the material.",
+          "x": 72,
+          "y": 562,
+          "width": 215.83740234375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "Convection involves the bulk movement of a fluid carrying energy from one place",
+          "x": 72,
+          "y": 545,
+          "width": 393.14794921875,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "to another.",
+          "x": 72,
+          "y": 528,
+          "width": 52.59375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "Radiation is the transfer of energy by electromagnetic waves and does not require",
+          "x": 72,
+          "y": 511,
+          "width": 398.66943359375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        },
+        {
+          "str": "a medium.",
+          "x": 72,
+          "y": 494,
+          "width": 51.35302734375,
+          "height": 11,
+          "ascent": 10.21044921875,
+          "descent": 2.59423828125
+        }
+      ]
+    }
+  ]
+}

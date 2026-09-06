@@ -1,0 +1,60 @@
+{
+  "summary": "2 of 5 claims confirmed against the chapter. 1 contradicted. 1 unsupported.",
+  "pdfUrl": "/chapters/chapter.pdf",
+  "results": [
+    {
+      "claimId": "c1",
+      "claimText": "The first law says the change in internal energy equals the heat added minus the work done by the system.",
+      "status": "confirmed",
+      "quote": "the change in the internal energy of a system equals the heat added to the system minus the work done by the system",
+      "page": 1,
+      "boundingBox": {
+        "x": 72,
+        "y": 619.21044921875,
+        "width": 431.65869140625,
+        "height": 29.8046875
+      },
+      "explanation": "Chapter 4.2 states this definition of the first law verbatim."
+    },
+    {
+      "claimId": "c2",
+      "claimText": "In a real thermodynamic process the entropy of an isolated system never decreases.",
+      "status": "confirmed",
+      "quote": "the entropy of an isolated system never decreases",
+      "page": 2,
+      "boundingBox": {
+        "x": 72,
+        "y": 712.21044921875,
+        "width": 426.15869140625,
+        "height": 12.8046875
+      },
+      "explanation": "Chapter 4.3 says exactly this about the second law of thermodynamics."
+    },
+    {
+      "claimId": "c3",
+      "claimText": "A perfect heat engine that converts all absorbed heat into work, rejecting no heat, is physically possible.",
+      "status": "contradicted",
+      "quote": "always rejects some heat to a cold reservoir",
+      "page": 2,
+      "boundingBox": {
+        "x": 72,
+        "y": 695.21044921875,
+        "width": 415.14794921875,
+        "height": 29.8046875
+      },
+      "explanation": "Chapter 4.3 states that a heat engine 'always rejects some heat to a cold reservoir', so total conversion is contradicted."
+    },
+    {
+      "claimId": "c4",
+      "claimText": "Thermal conductivity is measured in watts per mole per metre and is highest for gases.",
+      "status": "unverifiable",
+      "explanation": "The model cited a quote for this claim, but that exact sentence does not appear anywhere in the chapter, so the claim cannot be verified against the source."
+    },
+    {
+      "claimId": "c5",
+      "claimText": "Entropy varies inversely with temperature for every thermodynamic system.",
+      "status": "unsupported",
+      "explanation": "The chapter discusses entropy only as a measure of disorder; it never relates entropy to temperature."
+    }
+  ]
+}
