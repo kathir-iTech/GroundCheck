@@ -60,6 +60,7 @@ export function PdfSourceView({
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const pageWrapRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -133,7 +134,17 @@ export function PdfSourceView({
       pageNumber: focusedResult.page,
     });
 
-    wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+    const container = containerRef.current;
+    if (container) {
+      const targetTop =
+        wrap.offsetTop - container.clientHeight / 2 + wrap.clientHeight / 2;
+      container.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth",
+      });
+    } else {
+      wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }, [focusedResult, pages]);
 
   const focusedBoxPx = wrapperState?.boxPx ?? null;
@@ -174,7 +185,10 @@ export function PdfSourceView({
   }
 
   return (
-    <div className="relative flex h-full w-full justify-center overflow-y-auto scrollbar-slim px-4 py-4">
+    <div
+      ref={containerRef}
+      className="relative flex h-full w-full justify-center overflow-y-auto scrollbar-slim px-4 py-4"
+    >
       <div className="flex w-fit flex-col items-center gap-4">
         {pages.map(({ page, viewport }) => {
           const n = page.pageNumber;

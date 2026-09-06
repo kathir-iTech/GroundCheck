@@ -1,70 +1,72 @@
-# Groundcheck
+# Groundcheck — verify AI study answers against the real textbook
 
-Groundcheck verifies a student's AI-generated study answer against a real textbook chapter — claim by claim — and shows you exactly where each claim is (or isn't) supported on the actual PDF page.
+Paste any AI-generated study answer and Groundcheck checks it claim by claim against your actual textbook PDF — **confirmed**, **contradicted**, or **unsupported** — then draws a glowing highlight box on the exact page where the supporting (or contradicting) text appears, connected back to the claim card.
 
-It is **not** a chatbot and uses **no embeddings or vector store**. It passes the full chapter text to the model in a single prompt and then proves each claim with verbatim, character-for-character quote matching against the PDF, drawing a glowing box at the exact text position.
+It is **not** a chatbot and uses **no embeddings or vector store**. The whole chapter goes to the model in a single prompt; every confirmed/contradicted verdict is then *proven* by finding the model's quote character-for-character inside the extracted PDF text. Quotes that can't be matched verbatim are downgraded to **unverifiable** instead of being shown as evidence.
 
-## How it works
+## How it works (plain language)
 
-1. The app ships with a bundled chapter (`data/chapter.json`) that is extracted from a real PDF (`data/source/demo.pdf`) at build time.
-2. Paste an AI answer, click **Verify against the chapter**. A single server-side Gemini call splits the answer into atomic claims and labels each one `confirmed`, `contradicted`, or `unsupported`.
-3. For `confirmed` / `contradicted` claims, the app finds the model's verbatim quote inside the chapter text and computes its pixel position on the page (`lib/ground.ts` → `computeBox`).
-4. If the quote can't be matched character-for-character, the claim is **downgraded to `unverifiable`** instead of being shown as confirmed. No hallucinated evidence.
-5. The UI links each claim card to the rendered PDF page with a glowing highlight box and an animated connector curve.
+1. A chapter PDF is extracted into text + per-character geometry (`npm run extract`), bundled with the app.
+2. You paste an AI answer and press **Verify**. One server-side Gemini call splits it into atomic claims and labels each one.
+3. For confirmed/contradicted claims, the app searches the chapter text for the model's exact quote. If it exists, the app computes where that text is on the page and draws the highlight box. If the quote doesn't exist verbatim, the claim is downgraded — no invented evidence.
+4. The adjacent PDF viewer renders the real pages; clicking a claim auto-scrolls to its page and draws a glowing box + animated connector line.
 
-### Demo mode (default)
-
-The toggle in the input panel defaults to **OFF** (cached demo). It loads a pre-verified demo response (`data/demo-response.json`) instantly with zero API calls — this is what makes the free Vercel tier viable. Flip **Try the live example** on to run a real Gemini call.
-
-## Getting started
+## Setup
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
+cp .env.local.example .env.local   # add your GEMINI_API_KEY (demo mode works without it)
+npm run dev                         # http://localhost:3000
 ```
 
-Open http://localhost:3000. Demo mode works with no configuration.
-
-For live verification, copy `.env.local.example` to `.env.local` and set `GEMINI_API_KEY` (Google AI Studio key). Only Flash-tier models are free on Vercel Hobby.
+Demo mode (the toggle defaults to **OFF**/cached) needs no API key — it loads `data/demo-response.json` instantly. Flipping **Try the live example** on makes a real server-side Gemini call.
 
 ## Commands
 
-| Command | Description |
+| Command | Purpose |
 | --- | --- |
 | `npm run dev` | Start the dev server |
-| `npm run build` | Production build |
-| `npm run extract` | Extract `data/source/*.pdf` into `data/chapter.json` |
-| `npm run extract -- --demo` | Regenerate the demo PDF + all cached assets |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run extract` | Extract the single chapter PDF in `data/source/` into `data/chapter.json`, updating the title + per-page text, and copies the renderer assets. Prints per-page character counts and **warns loudly on any page under ~50 chars** (the scanned-image signature — OCR isn't supported). |
+| `npm run extract -- --file <pdf>` | Extract from an explicit path (e.g. a freshly dropped PDF) |
+| `npm run extract -- --title "…"` | Override the auto-detected chapter title |
+| `npm run capture-demo` | Run the real verify pipeline against `data/chapter.json` and cache the result to `data/demo-response.json` for demo mode. Pass the answer as an argument (`npm run capture-demo -- "My answer…"`) or via `--file answer.txt`. Uses `GEMINI_API_KEY` from `.env.local`. |
 
-## Using your own chapter
+### Swapping in your real textbook chapter
 
-1. Drop a real textbook PDF into `data/source/`.
-2. `npm run extract` — walks every page of the PDF, extracts the text with per-character geometry, and writes `data/chapter.json` (bundled into the build) plus `public/chapters/chapter.pdf` (rendered for the viewer).
-3. Update the chapter label in `components/InputPanel.tsx`.
+1. Put one digitally-native (text-selectable, not scanned) chapter PDF at `data/source/your-chapter.pdf` (replace the placeholder `demo.pdf`).
+2. `npm run extract` — title is read from `--title` or auto-detected from page 1; the per-page summary flags any page that looks image-only.
+3. `npm run capture-demo -- "a realistic example answer"` — generate a fresh cached demo that reflects the real chapter (this makes one real API call).
+4. The app now verifies against the real content; no UI code changes needed — the chapter title comes from `data/chapter.json` metadata.
 
-## Deployment (Vercel)
+## Textbook source
 
-- Install https://github.com/apps/vercel on the repo, or connect via the dashboard.
-- Framework preset: **Next.js** (auto-detected).
-- Environment variables: `GEMINI_API_KEY`, optional `GEMINI_MODEL`.
-- No `data/` or `public/` build steps needed — `next build` bundles `data/chapter.json` and copies `public/` automatically.
-
-Cost note: the free tier exposes only Flash-tier models; `.env.local.example` defaults to `gemini-3.6-flash`.
+Demo chapter is a synthetically generated two-page *"Chapter 4 — Thermodynamics and Energy"* used to develop the pipeline before a real textbook PDF is dropped in. Swap it out with `npm run extract` when the real PDF is ready.
 
 ## Project structure
 
 ```
 app/
-  api/verify/route.ts    POST handler — Gemini call, quote grounding, verdicts
-  page.tsx               3-panel UI: input / verdicts / PDF viewer
+  api/verify/route.ts    POST handler — thin wrapper over lib/verify (validation + error mapping)
+  page.tsx               3-panel UI: input / verdicts / PDF viewer (title from chapter metadata)
 components/
-  InputPanel.tsx         paste box + live toggle + verify button
-  ClaimCard.tsx          verdict card with expandable quote + evidence
-  PdfSourceView.tsx      pdf.js renderer, glow box, connector curve
+  InputPanel.tsx         paste box + live/cached toggle + verify button + char counter
+  ClaimCard.tsx          verdict card with expandable verbatim quote
+  PdfSourceView.tsx      pdf.js renderer, glowing highlight box, animated connector curve
 lib/
   schema.ts              zod schemas shared by server, CLI, and client
-  ground.ts              quote normalization, matching, bounding boxes
-  pdf-extract.ts         Node pdf.js text+geometry extraction
-  demo.ts                demo PDF generator (embedded Liberation Sans)
-  extract.ts             CLI: build chapter.json + copy PDF assets
+  pdf-extract.ts         Node pdf.js text + per-character geometry extraction
+  extract.ts             CLI: chapter.json build, warnings, title detection, asset copy
+  verify.ts              shared Gemini pipeline: claims → quote grounding → verdicts (with retry)
+  capture-demo.ts        CLI: run the real pipeline and cache the result for demo mode
+  ground.ts              quote normalization, matching, bounding-box math
+  load-env.ts            tiny .env.local loader for the CLI scripts
+  demo.ts                placeholder chapter generator (until a real PDF is supplied)
 ```
+
+## Deployment (Vercel)
+
+- Connect the repo; Vercel should auto-detect **Next.js**.
+- Settings → Environment Variables: `GEMINI_API_KEY` (required for live calls; demo mode works without it), optional `GEMINI_MODEL` (default `gemini-3.6-flash`).
+- Redeploy after saving env vars — they're only picked up by builds that start afterwards.
+- Only Flash-tier models are free on Vercel Hobby.

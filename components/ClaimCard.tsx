@@ -79,7 +79,7 @@ export function ClaimCard({
               </span>
             )}
           </div>
-          <p className="text-sm leading-snug text-foreground/90">
+          <p className="break-words text-sm leading-snug text-foreground/90">
             {result.claimText}
           </p>
 
@@ -99,7 +99,7 @@ export function ClaimCard({
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       Verbatim quote
                     </p>
-                    <p className="mt-1 italic leading-relaxed text-foreground/85">
+                    <p className="mt-1 break-words italic leading-relaxed text-foreground/85">
                       “{result.quote}”
                     </p>
                     {hasEvidence && (

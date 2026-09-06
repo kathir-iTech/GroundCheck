@@ -190,7 +190,11 @@ export async function buildDemoChapter(): Promise<{
   const pdfBytes = await buildDemoPdf();
   const pages = await extractPdfData(pdfBytes);
   applyDemoFontMetrics(pages);
-  const chapter: Chapter = { pdfUrl: "/chapters/chapter.pdf", pages };
+  const chapter: Chapter = {
+    pdfUrl: "/chapters/chapter.pdf",
+    title: "Physics · Chapter 4 — Thermodynamics and Energy",
+    pages,
+  };
 
   const results: VerificationResult[] = [];
   for (const seed of DEMO_CLAIM_SEEDS) {

@@ -18,6 +18,7 @@ export const PageSchema = z.object({
 
 export const ChapterSchema = z.object({
   pdfUrl: z.string(),
+  title: z.string(),
   pages: z.array(PageSchema),
 });
 

@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+
+const SOFT_MAX_CHARS = 2000;
 
 export function InputPanel({
   demoMode,
@@ -12,8 +15,10 @@ export function InputPanel({
   onChangeAnswer,
   onVerify,
   loading,
+  slowNote,
   error,
   useExample,
+  chapterTitle,
 }: {
   demoMode: boolean;
   onToggleDemo: (on: boolean) => void;
@@ -21,9 +26,14 @@ export function InputPanel({
   onChangeAnswer: (value: string) => void;
   onVerify: () => void;
   loading: boolean;
+  slowNote: boolean;
   error: string | null;
   useExample: () => void;
+  chapterTitle: string;
 }) {
+  const overSoftMax = answer.length > SOFT_MAX_CHARS;
+  const empty = answer.trim().length === 0;
+
   return (
     <div className="flex h-full flex-col gap-4">
       <div>
@@ -41,8 +51,20 @@ export function InputPanel({
           }
           className="mt-2 min-h-[220px] font-mono text-[13px]"
         />
-        <div className="mt-1 text-right text-xs text-muted-foreground">
-          {answer.length} chars
+        <div className="mt-1 flex items-center justify-end gap-2 text-xs">
+          <span
+            className={cn(
+              "text-muted-foreground",
+              overSoftMax && "font-medium text-amber-300"
+            )}
+          >
+            {answer.length.toLocaleString()} / {SOFT_MAX_CHARS}
+          </span>
+          {overSoftMax && (
+            <span className="text-amber-300">
+              Long answer — adds latency and cost. Consider trimming it.
+            </span>
+          )}
         </div>
       </div>
 
@@ -68,9 +90,7 @@ export function InputPanel({
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Chapter
         </p>
-        <p className="mt-1 text-sm font-semibold">
-          Physics · Chapter 4 — Thermodynamics and Energy
-        </p>
+        <p className="mt-1 text-sm font-semibold">{chapterTitle}</p>
       </div>
 
       <div className="mt-auto flex flex-col gap-2">
@@ -79,11 +99,17 @@ export function InputPanel({
             {error}
           </p>
         )}
-        <Button onClick={onVerify} disabled={loading || answer.trim().length < 10}>
+        <Button
+          onClick={onVerify}
+          disabled={empty || loading}
+          title={empty ? "Paste an answer first" : undefined}
+        >
           {loading ? (
             <>
               <span className="h-4 w-4 animate-spin rounded-full border-2 border-foreground/30 border-t-foreground" />
-              Verifying against the chapter…
+              {slowNote
+                ? "Still working…"
+                : "Verifying against the chapter…"}
             </>
           ) : (
             "Verify against the chapter"
