@@ -25,7 +25,7 @@ describe("data/ chapter.json", () => {
   });
 
   it("exposes the title used in the UI header", () => {
-    expect(chapter.title).toBe("Chapter 4 — Thermodynamics and Energy");
+    expect(chapter.title).toBe("Chapter 11 — Thermodynamics");
   });
 });
 
@@ -52,5 +52,17 @@ describe("data/ demo-response.json", () => {
         ],
       })
     ).toThrow();
+  });
+
+  it("keeps evidence on every confirmed/contradicted claim", () => {
+    const claims = VerificationResponseSchema.parse(demoResponse).results;
+    for (const c of claims) {
+      if (c.status === "confirmed" || c.status === "contradicted") {
+        expect(c.page).toBeDefined();
+        expect(c.boundingBox).toBeDefined();
+        expect(c.quote).toBeDefined();
+      }
+    }
+    expect(claims.some((c) => c.status === "unsupported")).toBe(true);
   });
 });

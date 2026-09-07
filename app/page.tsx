@@ -20,7 +20,7 @@ const onlineDemoResponse = demoResponse as unknown as VerificationResponse;
 
 const chapterTitle =
   (chapterMeta as { title?: string }).title ??
-  "Physics · Chapter 4 — Thermodynamics and Energy";
+  "Physics · Chapter 11 — Thermodynamics";
 
 const REQUEST_TIMEOUT_MS = 40_000;
 const SLOW_NOTE_MS = 8_000;

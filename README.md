@@ -42,7 +42,7 @@ Demo mode (the toggle defaults to **OFF**/cached) needs no API key — it loads 
 
 ## Textbook source
 
-Demo chapter is a synthetically generated two-page *"Chapter 4 — Thermodynamics and Energy"* used to develop the pipeline before a real textbook PDF is dropped in. Swap it out with `npm run extract` when the real PDF is ready.
+Chapter 11 — Thermodynamics from **NCERT Class 11 Physics Part II** (official 2026-27 reprint, `keph204.pdf`, ncert.nic.in), a digitally-native ~18-page PDF with selectable text. Extracted on demand with `npm run extract`; page text and per-character geometry are bundled into `data/chapter.json` and the PDF into `public/chapters/chapter.pdf`. The cached demo response in `data/demo-response.json` is generated against this real chapter (zero claims beyond its scope).
 
 ## Project structure
 
