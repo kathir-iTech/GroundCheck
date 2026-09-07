@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ChapterSchema, VerificationResponseSchema } from "./schema";
+import { CHAPTER_TITLE } from "./chapter-meta";
 
 import chapterData from "../data/chapter.json";
 import demoResponse from "../data/demo-response.json";
@@ -24,8 +25,8 @@ describe("data/ chapter.json", () => {
     }
   });
 
-  it("exposes the title used in the UI header", () => {
-    expect(chapter.title).toBe("Chapter 11 — Thermodynamics");
+  it("exposes the title used in the UI header, matching chapter-meta", () => {
+    expect(chapter.title).toBe(CHAPTER_TITLE);
   });
 });
 

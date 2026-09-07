@@ -51,6 +51,13 @@ async function writeChapter(chapter: Chapter) {
   );
 }
 
+async function writeChapterMeta(title: string) {
+  await writeFile(
+    path.join(ROOT, "lib", "chapter-meta.ts"),
+    `export const CHAPTER_TITLE = ${JSON.stringify(title)};`
+  );
+}
+
 async function writeSourcePdf(bytes: Uint8Array, filename: string) {
   await mkdir(SOURCE_DIR, { recursive: true });
   await writeFile(path.join(SOURCE_DIR, filename), Buffer.from(bytes));
@@ -92,12 +99,14 @@ async function runDemo() {
   await writePublicPdf(pdfBytes);
   await copyStaticPdfjsAssets();
   await writeChapter(chapter);
+  await writeChapterMeta(chapter.title);
   await writeFile(
     path.join(DATA_DIR, "demo-response.json"),
     JSON.stringify(demoResponse, null, 2)
   );
   console.log(`Demo assets written:
   data/chapter.json
+  lib/chapter-meta.ts (title: "${chapter.title}")
   data/demo-response.json
   data/source/demo.pdf
   public/chapters/chapter.pdf
@@ -146,8 +155,10 @@ async function runExtract(sourceFile?: string, titleOverride?: string) {
   await copyStaticPdfjsAssets();
   await writePublicPdf(data);
   await writeChapter(chapter);
+  await writeChapterMeta(title);
   console.log(`Wrote:
   data/chapter.json (${pages.length} pages, title: "${title}")
+  lib/chapter-meta.ts (title: "${title}")
   public/chapters/chapter.pdf
   public/pdfjs/pdf.worker.min.mjs
   public/pdfjs/standard_fonts/*`);
