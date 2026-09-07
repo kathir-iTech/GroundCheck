@@ -14,15 +14,13 @@ import {
 } from "@/lib/schema";
 
 import demoResponse from "@/data/demo-response.json";
-import chapterMeta from "@/data/chapter.json";
+import { CHAPTER_TITLE } from "@/lib/chapter-meta";
 
 const onlineDemoResponse = demoResponse as unknown as VerificationResponse;
 
-const chapterTitle =
-  (chapterMeta as { title?: string }).title ??
-  "Physics · Chapter 11 — Thermodynamics";
+const chapterTitle = CHAPTER_TITLE;
 
-const REQUEST_TIMEOUT_MS = 40_000;
+const REQUEST_TIMEOUT_MS = 50_000;
 const SLOW_NOTE_MS = 8_000;
 
 export default function Home() {
@@ -176,8 +174,8 @@ export default function Home() {
       <main className="grid min-h-0 flex-1 grid-cols-1 gap-0 overflow-hidden lg:grid-cols-[minmax(280px,320px)_minmax(340px,1fr)_480px]">
         <section className="min-h-0 overflow-y-auto border-b border-border px-4 py-5 scrollbar-slim lg:border-b-0 lg:border-r">
           <InputPanel
-            demoMode={liveMode}
-            onToggleDemo={toggleLive}
+            liveMode={liveMode}
+            onToggleLive={toggleLive}
             answer={answer}
             onChangeAnswer={setAnswer}
             onVerify={runVerify}
@@ -194,7 +192,7 @@ export default function Home() {
             {loading ? (
               slowNote ? (
                 <p className="animate-pulse text-sm text-muted-foreground">
-                  Still working — a long paste can take up to ~40 s.
+                  Still working — a long paste can take up to ~50 s.
                 </p>
               ) : (
                 <Skeleton className="h-5 w-2/3" />

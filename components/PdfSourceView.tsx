@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { PDFDocumentProxy, PDFPageProxy, PageViewport } from "pdfjs-dist";
 import type { BoundingBox, VerificationResult } from "@/lib/schema";
 
@@ -66,6 +66,18 @@ function bezierPath(from: ScreenPoint, to: ScreenPoint): string {
   return `M ${from.x} ${from.y} C ${from.x + mx} ${from.y}, ${to.x - mx} ${to.y}, ${to.x} ${to.y}`;
 }
 
+function useMediaQuery(query: string): boolean {
+  return useSyncExternalStore(
+    (onStoreChange) => {
+      const mql = window.matchMedia(query);
+      mql.addEventListener("change", onStoreChange);
+      return () => mql.removeEventListener("change", onStoreChange);
+    },
+    () => window.matchMedia(query).matches,
+    () => false
+  );
+}
+
 export function PdfSourceView({
   pdfUrl,
   focusedResult,
@@ -120,19 +132,19 @@ export function PdfSourceView({
       page
         .render({ canvas, viewport })
         .promise.catch((err) => {
-          if (err instanceof Error !== false) {
-            setError(
-              `Failed to render page ${page.pageNumber}: ${
-                err instanceof Error ? err.message : String(err)
-              }`
-            );
-          }
+          setError(
+            `Failed to render page ${page.pageNumber}: ${
+              err instanceof Error ? err.message : String(err)
+            }`
+          );
         });
     }
   }, [pages]);
 
   const focusedPageNumber = focusedResult?.page ?? null;
   const focusedHasBox = Boolean(focusedResult?.boundingBox);
+
+  const focusSeq = useRef(0);
 
   useLayoutEffect(() => {
     if (!focusedResult || !focusedResult.boundingBox || focusedResult.page == null) {
@@ -149,38 +161,53 @@ export function PdfSourceView({
     }
 
     const boxPx = boxToPixels(focusedResult.boundingBox, pageIndex.viewport);
-    const canvasRect = canvas.getBoundingClientRect();
-    const boxCenterScreen = {
-      x: canvasRect.left + boxPx.left + boxPx.width / 2,
-      y: canvasRect.top + boxPx.top + boxPx.height / 2,
+    const targetPage = focusedResult.page;
+    setWrapperState(null);
+    const seq = ++focusSeq.current;
+    const container = containerRef.current;
+
+    const commit = () => {
+      if (seq !== focusSeq.current) return;
+      const rect = canvas.getBoundingClientRect();
+      setWrapperState({
+        boxPx,
+        boxCenterScreen: {
+          x: rect.left + boxPx.left + boxPx.width / 2,
+          y: rect.top + boxPx.top + boxPx.height / 2,
+        },
+        pageNumber: targetPage,
+      });
     };
 
-    setWrapperState({
-      boxPx,
-      boxCenterScreen,
-      pageNumber: focusedResult.page,
-    });
-
-    const container = containerRef.current;
     if (container) {
       const targetTop =
         wrap.offsetTop - container.clientHeight / 2 + wrap.clientHeight / 2;
-      container.scrollTo({
-        top: Math.max(0, targetTop),
-        behavior: "smooth",
-      });
+      container.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        commit();
+      };
+      if (container.addEventListener) {
+        container.addEventListener("scrollend", finish, { once: true });
+      }
+      setTimeout(finish, 450);
     } else {
       wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(commit, 450);
     }
   }, [focusedResult, pages]);
 
   const focusedBoxPx = wrapperState?.boxPx ?? null;
   const boxCenter = wrapperState?.boxCenterScreen ?? null;
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const path = useMemo(() => {
-    if (!connectorFrom || !boxCenter) return null;
+    if (!isDesktop || !connectorFrom || !boxCenter) return null;
     return bezierPath(connectorFrom, boxCenter);
-  }, [connectorFrom, boxCenter]);
+  }, [isDesktop, connectorFrom, boxCenter]);
 
   const glowRgb =
     focusedResult && focusedHasBox

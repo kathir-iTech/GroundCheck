@@ -1,0 +1,1 @@
+export const CHAPTER_TITLE = "Chapter 11 — Thermodynamics";

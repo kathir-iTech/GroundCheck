@@ -9,8 +9,8 @@ import { cn } from "@/lib/utils";
 const SOFT_MAX_CHARS = 2000;
 
 export function InputPanel({
-  demoMode,
-  onToggleDemo,
+  liveMode,
+  onToggleLive,
   answer,
   onChangeAnswer,
   onVerify,
@@ -20,8 +20,8 @@ export function InputPanel({
   useExample,
   chapterTitle,
 }: {
-  demoMode: boolean;
-  onToggleDemo: (on: boolean) => void;
+  liveMode: boolean;
+  onToggleLive: (on: boolean) => void;
   answer: string;
   onChangeAnswer: (value: string) => void;
   onVerify: () => void;
@@ -45,7 +45,7 @@ export function InputPanel({
           value={answer}
           onChange={(e) => onChangeAnswer(e.target.value)}
           placeholder={
-            demoMode
+            liveMode
               ? "A demo answer is loaded. Paste your own to overwrite it."
               : "Paste the AI study answer here…"
           }
@@ -73,14 +73,14 @@ export function InputPanel({
           <div>
             <p className="text-sm font-medium">Live API mode</p>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              {demoMode
+              {liveMode
                 ? "Sends a real Gemini request from the server."
                 : "Uses the saved demo response — instant and free."}
             </p>
           </div>
           <Switch
-            checked={demoMode}
-            onCheckedChange={onToggleDemo}
+            checked={liveMode}
+            onCheckedChange={onToggleLive}
             aria-label="Live API mode"
           />
         </div>
@@ -114,7 +114,7 @@ export function InputPanel({
             "Verify against the chapter"
           )}
         </Button>
-        {!demoMode && (
+        {!liveMode && (
           <Button
             variant="ghost"
             size="sm"
