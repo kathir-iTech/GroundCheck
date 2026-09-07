@@ -7,7 +7,11 @@ import { PdfSourceView } from "@/components/PdfSourceView";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { DEMO_ANSWER } from "@/lib/demo-answer";
-import type { VerificationResponse } from "@/lib/schema";
+import {
+  STATUS_EDGE,
+  type VerificationResponse,
+  type VerificationResult,
+} from "@/lib/schema";
 
 import demoResponse from "@/data/demo-response.json";
 import chapterMeta from "@/data/chapter.json";
@@ -127,6 +131,25 @@ export default function Home() {
   const summaryLine = response?.summary;
   const zeroResults = Boolean(response && response.results.length === 0);
 
+  const statusCounts = useMemo(() => {
+    const counts: Record<VerificationResult["status"], number> = {
+      confirmed: 0,
+      contradicted: 0,
+      unsupported: 0,
+      unverifiable: 0,
+    };
+    for (const r of response?.results ?? []) counts[r.status] += 1;
+    return counts;
+  }, [response]);
+
+  const totalResults = response?.results.length ?? 0;
+  const statuses: VerificationResult["status"][] = [
+    "confirmed",
+    "contradicted",
+    "unsupported",
+    "unverifiable",
+  ];
+
   return (
     <div className="flex h-screen flex-col bg-background">
       <header className="flex items-center justify-between border-b border-border bg-card/60 px-5 py-3">
@@ -167,7 +190,7 @@ export default function Home() {
         </section>
 
         <section className="flex min-h-0 flex-col border-b border-border lg:border-b-0 lg:border-r">
-          <div className="px-5 py-3">
+          <div className="px-5 py-3" aria-live="polite">
             {loading ? (
               slowNote ? (
                 <p className="animate-pulse text-sm text-muted-foreground">
@@ -177,11 +200,31 @@ export default function Home() {
                 <Skeleton className="h-5 w-2/3" />
               )
             ) : summaryLine ? (
-              <p className="text-sm font-medium text-foreground/80">
-                {zeroResults
-                  ? "No checkable claims in that text."
-                  : summaryLine}
-              </p>
+              <>
+                <p className="text-sm font-medium text-foreground/80">
+                  {zeroResults ? "No checkable claims in that text." : summaryLine}
+                </p>
+                {!zeroResults && totalResults > 0 && (
+                  <div
+                    aria-hidden="true"
+                    className="mt-2 flex gap-1 overflow-hidden"
+                  >
+                    {statuses.map((s) =>
+                      statusCounts[s] > 0 ? (
+                        <span
+                          key={s}
+                          title={`${statusCounts[s]}`}
+                          className="h-1.5 rounded-full"
+                          style={{
+                            width: `${(statusCounts[s] / totalResults) * 100}%`,
+                            backgroundColor: STATUS_EDGE[s],
+                          }}
+                        />
+                      ) : null
+                    )}
+                  </div>
+                )}
+              </>
             ) : (
               <p className="text-sm text-muted-foreground">
                 Verdicts appear here.

@@ -63,3 +63,10 @@ export const STATUS_LABELS: Record<VerificationResult["status"], string> = {
   unsupported: "Unsupported",
   unverifiable: "Unverifiable",
 };
+
+export const STATUS_EDGE: Record<VerificationResult["status"], string> = {
+  confirmed: "#6FA06B",
+  contradicted: "#D96B52",
+  unsupported: "#C79B3C",
+  unverifiable: "#A2968A",
+};

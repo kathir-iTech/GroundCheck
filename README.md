@@ -19,7 +19,7 @@ cp .env.local.example .env.local   # add your GEMINI_API_KEY (demo mode works wi
 npm run dev                         # http://localhost:3000
 ```
 
-Demo mode (the toggle defaults to **OFF**/cached) needs no API key — it loads `data/demo-response.json` instantly. Flipping **Try the live example** on makes a real server-side Gemini call.
+Demo mode (the toggle defaults to **OFF**/cached) needs no API key — it loads `data/demo-response.json` instantly. Flipping **Live API mode** on makes a real server-side Gemini call.
 
 ## Commands
 
@@ -27,6 +27,7 @@ Demo mode (the toggle defaults to **OFF**/cached) needs no API key — it loads 
 | --- | --- |
 | `npm run dev` | Start the dev server |
 | `npm run build` / `npm start` | Production build / serve |
+| `npm test` | Unit tests for quote matching, summaries, and bundled data schemas |
 | `npm run extract` | Extract the single chapter PDF in `data/source/` into `data/chapter.json`, updating the title + per-page text, and copies the renderer assets. Prints per-page character counts and **warns loudly on any page under ~50 chars** (the scanned-image signature — OCR isn't supported). |
 | `npm run extract -- --file <pdf>` | Extract from an explicit path (e.g. a freshly dropped PDF) |
 | `npm run extract -- --title "…"` | Override the auto-detected chapter title |
