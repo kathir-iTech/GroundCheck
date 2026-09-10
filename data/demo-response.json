@@ -6,7 +6,7 @@
       "claimId": "claim-1",
       "claimText": "The zeroth law of thermodynamics says that if two systems are each in thermal equilibrium with a third system, then they are also in thermal equilibrium with each other.",
       "status": "confirmed",
-      "explanation": "The chapter states the zeroth law exactly this way: systems separately in thermal equilibrium with the same third system are in equilibrium with each other.",
+      "explanation": "The chapter explicitly defines the Zeroth Law of Thermodynamics using this exact statement.",
       "quote": "two systems in thermal equilibrium with a third system separately are in thermal equilibrium with each other",
       "page": 3,
       "boundingBox": {
@@ -20,8 +20,8 @@
       "claimId": "claim-2",
       "claimText": "The Kelvin-Planck statement of the second law says that no process is possible whose sole result is the absorption of heat from a reservoir and the complete conversion of that heat into work.",
       "status": "confirmed",
-      "explanation": "This is the chapter's Kelvin-Planck statement of the second law, near-verbatim.",
-      "quote": "No process is possible whose sole result is the absorption of heat from a reservoir and the complete conversion of the heat into work",
+      "explanation": "The text gives the Kelvin-Planck statement word-for-word, asserting that no process can absorb heat from a reservoir and completely convert it into work as its sole result.",
+      "quote": "No process is possible whose sole result is the absorption of heat from a reservoir and the complete conversion of the heat into work.",
       "page": 11,
       "boundingBox": {
         "x": 109.43999999999994,
@@ -34,21 +34,21 @@
       "claimId": "claim-3",
       "claimText": "A perfect engine that converts all absorbed heat into work without any other side effect is still allowed by the second law of thermodynamics, which only limits real engines.",
       "status": "contradicted",
-      "explanation": "The second law's Kelvin-Planck statement explicitly denies exactly this: no process can have as its sole result the complete conversion of absorbed heat into work.",
-      "quote": "the complete conversion of the heat into work",
+      "explanation": "The Kelvin-Planck statement explicitly denies the possibility of a perfect heat engine converting all absorbed heat into work without any other effect.",
+      "quote": "No process is possible whose sole result is the absorption of heat from a reservoir and the complete conversion of the heat into work.",
       "page": 11,
       "boundingBox": {
         "x": 109.43999999999994,
-        "y": 223.76099999999985,
-        "width": 227.3009999999997,
-        "height": 22.579999999999984
+        "y": 236.00099999999986,
+        "width": 227.30340000000035,
+        "height": 34.81999999999999
       }
     },
     {
       "claimId": "claim-4",
       "claimText": "Thermal conductivity is highest in gases because their molecules are spaced farthest apart, so they transfer heat more efficiently than liquids or solids.",
       "status": "unsupported",
-      "explanation": "The chapter lists thermal conductivity as a material quantity but makes no claim about gases conducting best; the assertion goes beyond this chapter."
+      "explanation": "The text lists thermal conductivity in a summary table of physical quantities but does not compare thermal conductivity values or heat transfer efficiency across gases, liquids, and solids."
     }
   ]
 }

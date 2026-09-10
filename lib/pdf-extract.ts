@@ -50,7 +50,7 @@ export async function extractPdfData(data: Uint8Array): Promise<Page[]> {
     }
 
     const text = textChunks
-      .map((c) => `${c.str}${c.eol ? "\n" : ""}`)
+      .map((c) => `${c.str}${c.eol ? "\n" : " "}`)
       .join("");
     pages.push({ pageNumber: n, text, items });
   }

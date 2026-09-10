@@ -6,7 +6,7 @@ export type QuoteVerification = {
   boundingBox?: BoundingBox;
 };
 
-function normalize(text: string): string {
+export function normalize(text: string): string {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 

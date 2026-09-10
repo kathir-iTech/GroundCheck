@@ -20,7 +20,7 @@ const onlineDemoResponse = demoResponse as unknown as VerificationResponse;
 
 const chapterTitle = CHAPTER_TITLE;
 
-const REQUEST_TIMEOUT_MS = 50_000;
+const REQUEST_TIMEOUT_MS = 42_000;
 const SLOW_NOTE_MS = 8_000;
 
 export default function Home() {

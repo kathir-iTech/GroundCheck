@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ChapterSchema, VerificationResponseSchema } from "./schema";
+import { normalize } from "./ground";
 import { CHAPTER_TITLE } from "./chapter-meta";
 
 import chapterData from "../data/chapter.json";
@@ -22,6 +23,19 @@ describe("data/ chapter.json", () => {
         expect(typeof i.ascent).toBe("number");
         expect(typeof i.descent).toBe("number");
       }
+    }
+  });
+
+  it("joins page text exactly the way the quote matcher will search it", () => {
+    // Regression: extraction used to concatenate items with no separator while
+    // ground.ts joins them with a space, gluing words together (e.g. the old
+    // "ELEVENTHERMODYNAMICS" heading) so real quotes failed to match and got
+    // wrongly downgraded. Both sides must join identically.
+    const expected = chapter.pages.map(
+      (page) => page.items.map((i) => normalize(i.str)).filter((s) => s.length > 0).join(" "),
+    );
+    for (const [i, page] of chapter.pages.entries()) {
+      expect(normalize(page.text)).toBe(expected[i]);
     }
   });
 
