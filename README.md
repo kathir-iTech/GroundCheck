@@ -70,4 +70,5 @@ lib/
 - Connect the repo; Vercel should auto-detect **Next.js**.
 - Settings → Environment Variables: `GEMINI_API_KEY` (required for live calls; demo mode works without it), optional `GEMINI_MODEL` (default `gemini-3.6-flash`).
 - Redeploy after saving env vars — they're only picked up by builds that start afterwards.
-- Only Flash-tier models are free on Vercel Hobby.
+- Vercel Hobby tier is free for hosting.
+- On the Gemini API, Flash (not Pro) is the free-tier model.

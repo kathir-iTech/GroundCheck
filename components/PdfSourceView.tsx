@@ -2,11 +2,14 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { PDFDocumentProxy, PDFPageProxy, PageViewport } from "pdfjs-dist";
+import {
+  computeFitScale,
+  PDF_VIEWER_HORIZONTAL_PADDING_PX,
+} from "@/lib/pdf-fit";
 import type { BoundingBox, VerificationResult } from "@/lib/schema";
 
 type LoadedPage = {
   page: PDFPageProxy;
-  viewport: PageViewport;
 };
 
 type ScreenPoint = { x: number; y: number };
@@ -88,6 +91,8 @@ export function PdfSourceView({
   connectorFrom: ConnectorFrom;
 }) {
   const [pages, setPages] = useState<LoadedPage[]>([]);
+  const [nativeWidth, setNativeWidth] = useState<number | null>(null);
+  const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [wrapperState, setWrapperState] = useState<PageWrapperState | null>(null);
 
@@ -95,9 +100,27 @@ export function PdfSourceView({
   const pageWrapRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const measureAvailableWidth = useCallback((): number | null => {
+    const container = containerRef.current;
+    if (!container) return null;
+    return container.clientWidth - PDF_VIEWER_HORIZONTAL_PADDING_PX;
+  }, []);
+
+  const applyScale = useCallback(
+    (availableWidth: number | null, native: number | null) => {
+      if (availableWidth == null || native == null) return;
+      setScale((prev) => {
+        const next = computeFitScale(availableWidth, native);
+        return Math.abs(prev - next) < 0.005 ? prev : next;
+      });
+    },
+    []
+  );
+
   useEffect(() => {
     let cancelled = false;
     setPages([]);
+    setNativeWidth(null);
     setError(null);
 
     (async () => {
@@ -105,11 +128,13 @@ export function PdfSourceView({
         const doc = await getPdfDocument(pdfUrl);
         const loaded: LoadedPage[] = [];
         for (let n = 1; n <= doc.numPages; n++) {
-          const page = await doc.getPage(n);
-          const viewport = page.getViewport({ scale: 1.5 });
-          loaded.push({ page, viewport });
+          loaded.push({ page: await doc.getPage(n) });
         }
-        if (!cancelled) setPages(loaded);
+        if (cancelled) return;
+        const native = loaded[0]?.page.getViewport({ scale: 1 }).width ?? null;
+        setPages(loaded);
+        setNativeWidth(native);
+        applyScale(measureAvailableWidth(), native);
       } catch (err) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : String(err));
@@ -119,12 +144,32 @@ export function PdfSourceView({
     return () => {
       cancelled = true;
     };
-  }, [pdfUrl]);
+  }, [pdfUrl, applyScale, measureAvailableWidth]);
+
+  // Refit whenever the panel itself changes width (window resize, column
+  // layout changes, devtools docking, …) — a ResizeObserver on the container,
+  // not a window listener, since the panel can resize independently.
+  useEffect(() => {
+    if (nativeWidth == null) return;
+    const container = containerRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => {
+      applyScale(measureAvailableWidth(), nativeWidth);
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [nativeWidth, applyScale, measureAvailableWidth]);
 
   useEffect(() => {
-    for (const { page, viewport } of pages) {
+    for (const { page } of pages) {
+      const viewport = page.getViewport({ scale });
       const canvas = canvasRefs.current.get(page.pageNumber);
-      if (!canvas || canvas.width === viewport.width) continue;
+      if (!canvas) continue;
+      if (
+        canvas.width === Math.floor(viewport.width) &&
+        canvas.height === Math.floor(viewport.height)
+      )
+        continue;
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       const ctx = canvas.getContext("2d");
@@ -139,7 +184,7 @@ export function PdfSourceView({
           );
         });
     }
-  }, [pages]);
+  }, [pages, scale]);
 
   const focusedPageNumber = focusedResult?.page ?? null;
   const focusedHasBox = Boolean(focusedResult?.boundingBox);
@@ -160,7 +205,12 @@ export function PdfSourceView({
       return;
     }
 
-    const boxPx = boxToPixels(focusedResult.boundingBox, pageIndex.viewport);
+    // Box math runs through the page's *current* viewport, so the highlight
+    // stays aligned after any rescale; this effect re-runs on `scale`.
+    const boxPx = boxToPixels(
+      focusedResult.boundingBox,
+      pageIndex.page.getViewport({ scale })
+    );
     const targetPage = focusedResult.page;
     setWrapperState(null);
     const seq = ++focusSeq.current;
@@ -198,7 +248,7 @@ export function PdfSourceView({
       wrap.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(commit, 450);
     }
-  }, [focusedResult, pages]);
+  }, [focusedResult, pages, scale]);
 
   const focusedBoxPx = wrapperState?.boxPx ?? null;
   const boxCenter = wrapperState?.boxCenterScreen ?? null;
@@ -241,10 +291,11 @@ export function PdfSourceView({
   return (
     <div
       ref={containerRef}
-      className="relative flex h-full w-full justify-center overflow-y-auto scrollbar-slim px-4 py-4"
+      className="relative flex h-full w-full overflow-auto scrollbar-slim px-4 py-4"
     >
-      <div className="flex w-fit flex-col items-center gap-4">
-        {pages.map(({ page, viewport }) => {
+      <div className="m-auto flex w-fit flex-col items-center gap-4">
+        {pages.map(({ page }) => {
+          const viewport = page.getViewport({ scale });
           const n = page.pageNumber;
           const showGlow = focusedPageNumber === n && focusedBoxPx != null;
           return (
