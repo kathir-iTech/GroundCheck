@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import type { PDFDocumentProxy, PDFPageProxy, PageViewport } from "pdfjs-dist";
+import type { PDFDocumentProxy, PDFPageProxy, PageViewport, RenderTask } from "pdfjs-dist";
 import {
   computeFitScale,
   PDF_VIEWER_HORIZONTAL_PADDING_PX,
@@ -99,6 +99,7 @@ export function PdfSourceView({
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const pageWrapRefs = useRef<Map<number, HTMLDivElement>>(new Map());
   const containerRef = useRef<HTMLDivElement>(null);
+  const renderTasksRef = useRef<Map<number, RenderTask>>(new Map());
 
   const measureAvailableWidth = useCallback((): number | null => {
     const container = containerRef.current;
@@ -163,25 +164,46 @@ export function PdfSourceView({
   useEffect(() => {
     for (const { page } of pages) {
       const viewport = page.getViewport({ scale });
-      const canvas = canvasRefs.current.get(page.pageNumber);
+      const n = page.pageNumber;
+      const canvas = canvasRefs.current.get(n);
       if (!canvas) continue;
       if (
         canvas.width === Math.floor(viewport.width) &&
         canvas.height === Math.floor(viewport.height)
       )
         continue;
+      // A previous render may still be in flight (e.g. pages-loaded and
+      // ResizeObserver's first scale change fire close together). pdf.js forbids
+      // reusing a canvas while a render is active, so cancel the stale task
+      // first; its rejection is expected on cancel, not a real error.
+      const existing = renderTasksRef.current.get(n);
+      if (existing) {
+        existing.cancel();
+        renderTasksRef.current.delete(n);
+      }
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       const ctx = canvas.getContext("2d");
       if (!ctx) continue;
-      page
-        .render({ canvas, viewport })
-        .promise.catch((err) => {
+      const task = page.render({ canvas, viewport });
+      renderTasksRef.current.set(n, task);
+      task.promise
+        .catch((err) => {
+          if (
+            err instanceof Object &&
+            err.name === "RenderingCancelledException"
+          )
+            return;
           setError(
-            `Failed to render page ${page.pageNumber}: ${
+            `Failed to render page ${n}: ${
               err instanceof Error ? err.message : String(err)
             }`
           );
+        })
+        .finally(() => {
+          if (renderTasksRef.current.get(n) === task) {
+            renderTasksRef.current.delete(n);
+          }
         });
     }
   }, [pages, scale]);

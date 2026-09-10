@@ -1,5 +1,9 @@
 # Groundcheck — verify AI study answers against the real textbook
 
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
+
 Paste any AI-generated study answer and Groundcheck checks it claim by claim against your actual textbook PDF — **confirmed**, **contradicted**, or **unsupported** — then draws a glowing highlight box on the exact page where the supporting (or contradicting) text appears, connected back to the claim card.
 
 It is **not** a chatbot and uses **no embeddings or vector store**. The whole chapter goes to the model in a single prompt; every confirmed/contradicted verdict is then *proven* by finding the model's quote character-for-character inside the extracted PDF text. Quotes that can't be matched verbatim are downgraded to **unverifiable** instead of being shown as evidence.
@@ -64,6 +68,10 @@ lib/
   load-env.ts            tiny .env.local loader for the CLI scripts
   demo.ts                placeholder chapter generator (until a real PDF is supplied)
 ```
+
+## Design notes
+
+Warm, soft, human — not the generic dark "AI product" dashboard: warm paper backgrounds, a coral accent reserved for interactive elements, deep plum ink for headings. The design deliberately avoids the usual generated-tool tells: no near-black background, no ALL-CAPS eyebrow labels, no em-dash header flourishes. Status is carried by the verdict words themselves, with color as decoration (contrast-safe, never color alone), and all copy is plain sentence case.
 
 ## Deployment (Vercel)
 
